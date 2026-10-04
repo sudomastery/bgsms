@@ -5,8 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [1.10.0] - 2026-10-04
 ### Added
 - Added inline audio player for MMS attachments ([#261])
+
+### Changed
+- Updated translations
 
 ### Fixed
 - Fixed exposed action receivers for security ([#834])
@@ -250,6 +255,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#225]: https://github.com/FossifyOrg/Messages/issues/225
 [#234]: https://github.com/FossifyOrg/Messages/issues/234
 [#243]: https://github.com/FossifyOrg/Messages/issues/243
+[#261]: https://github.com/FossifyOrg/Messages/issues/261
 [#262]: https://github.com/FossifyOrg/Messages/issues/262
 [#264]: https://github.com/FossifyOrg/Messages/issues/264
 [#274]: https://github.com/FossifyOrg/Messages/issues/274
@@ -278,11 +284,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#644]: https://github.com/FossifyOrg/Messages/issues/644
 [#651]: https://github.com/FossifyOrg/Messages/issues/651
 [#713]: https://github.com/FossifyOrg/Messages/issues/713
-[#261]: https://github.com/FossifyOrg/Messages/issues/261
 [#829]: https://github.com/FossifyOrg/Messages/issues/829
 [#834]: https://github.com/FossifyOrg/Messages/issues/834
 
-[Unreleased]: https://github.com/FossifyOrg/Messages/compare/1.9.1...HEAD
+[Unreleased]: https://github.com/FossifyOrg/Messages/compare/1.10.0...HEAD
+[1.10.0]: https://github.com/FossifyOrg/Messages/compare/1.9.1...1.10.0
 [1.9.1]: https://github.com/FossifyOrg/Messages/compare/1.9.0...1.9.1
 [1.9.0]: https://github.com/FossifyOrg/Messages/compare/1.8.1...1.9.0
 [1.8.1]: https://github.com/FossifyOrg/Messages/compare/1.8.0...1.8.1
