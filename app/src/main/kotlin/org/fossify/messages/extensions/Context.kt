@@ -41,7 +41,6 @@ import org.fossify.commons.extensions.showErrorToast
 import org.fossify.commons.extensions.toast
 import org.fossify.commons.extensions.trimToComparableNumber
 import org.fossify.commons.helpers.DAY_SECONDS
-import org.fossify.commons.helpers.MONTH_SECONDS
 import org.fossify.commons.helpers.MyContactsContentProvider
 import org.fossify.commons.helpers.PERMISSION_READ_CONTACTS
 import org.fossify.commons.helpers.SimpleContactsHelper
@@ -892,6 +891,8 @@ fun Context.deleteConversation(threadId: Long) {
     }
 }
 
+private const val RECYCLE_BIN_RETENTION_DAYS = 60L
+
 fun Context.checkAndDeleteOldRecycleBinMessages(callback: (() -> Unit)? = null) {
     if (
         config.useRecycleBin
@@ -901,7 +902,7 @@ fun Context.checkAndDeleteOldRecycleBinMessages(callback: (() -> Unit)? = null) 
         ensureBackgroundThread {
             try {
                 messagesDB.getOldRecycleBinMessages(
-                    timestamp = System.currentTimeMillis() - MONTH_SECONDS * 1000L
+                    timestamp = System.currentTimeMillis() - RECYCLE_BIN_RETENTION_DAYS * DAY_SECONDS * 1000L
                 ).forEach { message ->
                     deleteMessage(message.id, message.isMMS)
                 }
