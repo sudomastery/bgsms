@@ -64,6 +64,7 @@ import org.fossify.messages.interfaces.ConversationsDao
 import org.fossify.messages.interfaces.DraftsDao
 import org.fossify.messages.interfaces.MessageAttachmentsDao
 import org.fossify.messages.interfaces.MessagesDao
+import org.fossify.messages.interfaces.SenderRulesDao
 import org.fossify.messages.messaging.MessagingUtils
 import org.fossify.messages.messaging.MessagingUtils.Companion.ADDRESS_SEPARATOR
 import org.fossify.messages.messaging.SmsSender
@@ -86,6 +87,9 @@ fun Context.getMessagesDB() = MessagesDatabase.getInstance(this)
 
 val Context.conversationsDB: ConversationsDao
     get() = getMessagesDB().ConversationsDao()
+
+val Context.senderRulesDB: SenderRulesDao
+    get() = getMessagesDB().SenderRulesDao()
 
 val Context.attachmentsDB: AttachmentsDao
     get() = getMessagesDB().AttachmentsDao()
