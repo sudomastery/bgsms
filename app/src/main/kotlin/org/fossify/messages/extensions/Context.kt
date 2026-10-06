@@ -41,7 +41,6 @@ import org.fossify.commons.extensions.showErrorToast
 import org.fossify.commons.extensions.toast
 import org.fossify.commons.extensions.trimToComparableNumber
 import org.fossify.commons.helpers.DAY_SECONDS
-import org.fossify.commons.helpers.MONTH_SECONDS
 import org.fossify.commons.helpers.MyContactsContentProvider
 import org.fossify.commons.helpers.PERMISSION_READ_CONTACTS
 import org.fossify.commons.helpers.SimpleContactsHelper
@@ -51,6 +50,7 @@ import org.fossify.commons.models.PhoneNumber
 import org.fossify.commons.models.SimpleContact
 import org.fossify.messages.R
 import org.fossify.messages.databases.MessagesDatabase
+import org.fossify.messages.helpers.MpesaBlur
 import org.fossify.messages.helpers.AttachmentUtils.parseAttachmentNames
 import org.fossify.messages.helpers.Config
 import org.fossify.messages.helpers.FILE_SIZE_NONE
@@ -65,6 +65,7 @@ import org.fossify.messages.interfaces.ConversationsDao
 import org.fossify.messages.interfaces.DraftsDao
 import org.fossify.messages.interfaces.MessageAttachmentsDao
 import org.fossify.messages.interfaces.MessagesDao
+import org.fossify.messages.interfaces.SenderRulesDao
 import org.fossify.messages.messaging.MessagingUtils
 import org.fossify.messages.messaging.MessagingUtils.Companion.ADDRESS_SEPARATOR
 import org.fossify.messages.messaging.SmsSender
@@ -87,6 +88,9 @@ fun Context.getMessagesDB() = MessagesDatabase.getInstance(this)
 
 val Context.conversationsDB: ConversationsDao
     get() = getMessagesDB().ConversationsDao()
+
+val Context.senderRulesDB: SenderRulesDao
+    get() = getMessagesDB().SenderRulesDao()
 
 val Context.attachmentsDB: AttachmentsDao
     get() = getMessagesDB().AttachmentsDao()
@@ -892,6 +896,8 @@ fun Context.deleteConversation(threadId: Long) {
     }
 }
 
+private const val RECYCLE_BIN_RETENTION_DAYS = 60L
+
 fun Context.checkAndDeleteOldRecycleBinMessages(callback: (() -> Unit)? = null) {
     if (
         config.useRecycleBin
@@ -901,7 +907,7 @@ fun Context.checkAndDeleteOldRecycleBinMessages(callback: (() -> Unit)? = null) 
         ensureBackgroundThread {
             try {
                 messagesDB.getOldRecycleBinMessages(
-                    timestamp = System.currentTimeMillis() - MONTH_SECONDS * 1000L
+                    timestamp = System.currentTimeMillis() - RECYCLE_BIN_RETENTION_DAYS * DAY_SECONDS * 1000L
                 ).forEach { message ->
                     deleteMessage(message.id, message.isMMS)
                 }
@@ -1073,7 +1079,7 @@ fun Context.showReceivedMessageNotification(
             messageId = messageId,
             isMms = isMms,
             address = address,
-            body = body,
+            body = if (MpesaBlur.isMpesaSender(address, senderName)) MpesaBlur.mask(body) else body,
             threadId = threadId,
             bitmap = bitmap,
             sender = senderName

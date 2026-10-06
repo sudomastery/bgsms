@@ -30,7 +30,13 @@ import org.fossify.messages.extensions.getContactFromAddress
 import org.fossify.messages.extensions.getThreadParticipants
 import org.fossify.messages.extensions.messagesDB
 import org.fossify.messages.extensions.renameConversation
+import org.fossify.messages.extensions.senderRulesDB
 import org.fossify.messages.extensions.startContactDetailsIntent
+import org.fossify.messages.extensions.updateConversationArchivedStatus
+import org.fossify.messages.dialogs.ArchiveExceptionsDialog
+import org.fossify.messages.helpers.IncomingRules
+import org.fossify.messages.helpers.refreshConversations
+import org.fossify.messages.models.SenderRule
 import org.fossify.messages.helpers.THREAD_ID
 import org.fossify.messages.models.Conversation
 
@@ -65,6 +71,7 @@ class ConversationDetailsActivity : SimpleActivity() {
                 setupTextViews()
                 setupParticipants()
                 setupCustomNotifications()
+                setupSenderRules()
             }
         }
     }
@@ -77,6 +84,7 @@ class ConversationDetailsActivity : SimpleActivity() {
         val primaryColor = getProperPrimaryColor()
         arrayOf(
             binding.notificationsHeading,
+            binding.senderRulesHeading,
             binding.conversationNameHeading,
             binding.membersHeading
         ).forEach {
@@ -109,6 +117,54 @@ class ConversationDetailsActivity : SimpleActivity() {
                     putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
                     putExtra(Settings.EXTRA_CHANNEL_ID, threadId.toString())
                     startActivity(this)
+                }
+            }
+        }
+    }
+
+    private fun setupSenderRules() {
+        val conv = conversation ?: return
+        if (conv.isGroupConversation || conv.phoneNumber.isBlank()) return
+        val key = IncomingRules.keyFor(conv.phoneNumber)
+
+        ensureBackgroundThread {
+            val rule = senderRulesDB.get(key) ?: SenderRule(key)
+            runOnUiThread {
+                binding.apply {
+                    senderRulesHeading.beVisible()
+                    muteSenderHolder.beVisible()
+                    autoArchiveHolder.beVisible()
+                    archiveExceptionsButton.beVisibleIf(rule.autoArchive)
+                    muteSender.isChecked = rule.muted
+                    autoArchive.isChecked = rule.autoArchive
+
+                    fun save() {
+                        rule.muted = muteSender.isChecked
+                        rule.autoArchive = autoArchive.isChecked
+                        archiveExceptionsButton.beVisibleIf(rule.autoArchive)
+                        ensureBackgroundThread {
+                            if (rule.muted || rule.autoArchive) {
+                                senderRulesDB.insertOrUpdate(rule)
+                            } else {
+                                senderRulesDB.delete(key)
+                            }
+                            // archiving a sender also moves the existing chat there
+                            updateConversationArchivedStatus(threadId, rule.autoArchive)
+                            refreshConversations()
+                        }
+                    }
+
+                    muteSenderHolder.setOnClickListener {
+                        muteSender.toggle()
+                        save()
+                    }
+                    autoArchiveHolder.setOnClickListener {
+                        autoArchive.toggle()
+                        save()
+                    }
+                    archiveExceptionsButton.setOnClickListener {
+                        ArchiveExceptionsDialog(this@ConversationDetailsActivity, key)
+                    }
                 }
             }
         }
