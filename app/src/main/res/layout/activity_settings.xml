@@ -380,6 +380,13 @@
 
             </RelativeLayout>
 
+            <org.fossify.commons.views.MyTextView
+                android:id="@+id/settings_archive_exceptions"
+                style="@style/SettingsHolderTextViewOneLinerStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/archive_exceptions" />
+
             <include
                 android:id="@+id/settings_archive_divider"
                 layout="@layout/divider" />

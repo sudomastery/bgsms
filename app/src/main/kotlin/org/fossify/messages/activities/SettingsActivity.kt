@@ -32,6 +32,7 @@ import org.fossify.commons.helpers.ensureBackgroundThread
 import org.fossify.commons.helpers.isQPlus
 import org.fossify.commons.helpers.isTiramisuPlus
 import org.fossify.commons.models.RadioItem
+import org.fossify.messages.dialogs.ArchiveExceptionsDialog
 import org.fossify.messages.R
 import org.fossify.messages.databinding.ActivitySettingsBinding
 import org.fossify.messages.dialogs.ExportMessagesDialog
@@ -115,6 +116,7 @@ class SettingsActivity : SimpleActivity() {
         setupSendLongMessageAsMMS()
         setupGroupMessageAsMMS()
         setupKeepConversationsArchived()
+        setupArchiveExceptions()
         setupLockScreenVisibility()
         setupMMSFileSizeLimit()
         setupUseRecycleBin()
@@ -311,6 +313,12 @@ class SettingsActivity : SimpleActivity() {
         settingsKeepConversationsArchivedHolder.setOnClickListener {
             settingsKeepConversationsArchived.toggle()
             config.keepConversationsArchived = settingsKeepConversationsArchived.isChecked
+        }
+    }
+
+    private fun setupArchiveExceptions() = binding.apply {
+        settingsArchiveExceptions.setOnClickListener {
+            ArchiveExceptionsDialog(this@SettingsActivity)
         }
     }
 
