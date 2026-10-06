@@ -158,6 +158,6 @@
     <string name="exception_sender">Sender (number or name, optional)</string>
     <string name="exception_keyword">Keyword (optional)</string>
     <string name="exception_needs_one">Enter a sender, a keyword, or both</string>
-    <string name="archive_exceptions_explainer">A message is kept out of the archive when it matches a sender and keyword below. Leave one empty to match anything.</string>
+    <string name="archive_exceptions_explainer">These only apply to senders set to go straight to archive. A message is kept in the main list when it matches the sender and keyword below. Leave one empty to match anything.</string>
     <string name="start_chat">Start chat</string>
 </resources>

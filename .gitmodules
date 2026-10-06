@@ -1,0 +1,4 @@
+[submodule "commons-bgsms"]
+	path = commons-bgsms
+	url = https://github.com/sudomastery/commons-bgsms.git
+	branch = bgsms

@@ -1,22 +1,24 @@
 # Fossify Messages
 
-## bgsms
-
-bgsms is a personal fork of Fossify Messages with extra features: flash SMS archiving, per-sender mute and auto-archive with exceptions, M-PESA balance blur, whole-message copy only, and a 60 day recycle bin.
-
-It depends on a patched copy of Fossify commons that removes the "fake version" warnings shown to forks. Before building, publish it locally:
-
-```
-git clone -b bgsms https://github.com/sudomastery/commons-bgsms.git
-cd commons-bgsms
-VERSION=6.1.6-bgsms ./gradlew :commons:publishToMavenLocal
-```
-
-Then build bgsms with `./gradlew assembleCoreRelease`.
-
 <img alt="Logo" src="graphics/icon.webp" width="120" />
 
 <a href='https://play.google.com/store/apps/details?id=org.fossify.messages'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' height=80/></a> <a href="https://f-droid.org/packages/org.fossify.messages/"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on-en.svg" alt="Get it on F-Droid" height=80/></a> <a href="https://apt.izzysoft.de/fdroid/index/apk/org.fossify.messages"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height=80/></a>
+
+The badges above are for the upstream Fossify Messages app, not for bgsms.
+
+## bgsms (this fork)
+
+bgsms is a personal fork of Fossify Messages with extra features: flash SMS archiving, per-sender mute and auto-archive with exceptions, M-PESA balance blur, whole-message copy only, and a 60 day recycle bin.
+
+It uses a patched copy of Fossify commons that removes the "fake version" warnings shown to forks. The patch lives in the `commons-bgsms` submodule and Gradle builds it automatically, so clone with submodules and build:
+
+```
+git clone --recurse-submodules https://github.com/sudomastery/bgsms.git
+cd bgsms
+./gradlew assembleCoreRelease
+```
+
+If you already cloned without submodules, run `git submodule update --init`.
 
 Fossify Messages is your trusted messaging companion, designed to enhance your messaging experience in various ways.
 
