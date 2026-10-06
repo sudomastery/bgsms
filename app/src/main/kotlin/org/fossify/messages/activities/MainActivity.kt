@@ -13,7 +13,6 @@ import android.text.TextUtils
 import androidx.appcompat.content.res.AppCompatResources
 import org.fossify.commons.dialogs.PermissionRequiredDialog
 import org.fossify.commons.extensions.adjustAlpha
-import org.fossify.commons.extensions.appLaunched
 import org.fossify.commons.extensions.appLockManager
 import org.fossify.commons.extensions.applyColorFilter
 import org.fossify.commons.extensions.areSystemAnimationsEnabled
@@ -21,7 +20,6 @@ import org.fossify.commons.extensions.beGone
 import org.fossify.commons.extensions.beGoneIf
 import org.fossify.commons.extensions.beVisible
 import org.fossify.commons.extensions.beVisibleIf
-import org.fossify.commons.extensions.checkAppSideloading
 import org.fossify.commons.extensions.checkWhatsNew
 import org.fossify.commons.extensions.convertToBitmap
 import org.fossify.commons.extensions.fadeIn
@@ -29,6 +27,7 @@ import org.fossify.commons.extensions.formatDateOrTime
 import org.fossify.commons.extensions.getMyContactsCursor
 import org.fossify.commons.extensions.getProperBackgroundColor
 import org.fossify.commons.extensions.getProperPrimaryColor
+import org.fossify.commons.extensions.getContrastColor
 import org.fossify.commons.extensions.getProperTextColor
 import org.fossify.commons.extensions.hideKeyboard
 import org.fossify.commons.extensions.openNotificationSettings
@@ -90,7 +89,6 @@ class MainActivity : SimpleActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        appLaunched(BuildConfig.APPLICATION_ID)
         setupOptionsMenu()
         refreshMenuItems()
 
@@ -99,10 +97,6 @@ class MainActivity : SimpleActivity() {
         checkAndDeleteOldRecycleBinMessages()
         clearAllMessagesIfNeeded {
             loadMessages()
-        }
-
-        if (checkAppSideloading()) {
-            return
         }
     }
 
@@ -128,6 +122,12 @@ class MainActivity : SimpleActivity() {
 
         val properPrimaryColor = getProperPrimaryColor()
         binding.noConversationsPlaceholder2.setTextColor(properPrimaryColor)
+        binding.conversationsFab.apply {
+            backgroundTintList = android.content.res.ColorStateList.valueOf(properPrimaryColor)
+            val contrast = properPrimaryColor.getContrastColor()
+            setTextColor(contrast)
+            iconTint = android.content.res.ColorStateList.valueOf(contrast)
+        }
         binding.noConversationsPlaceholder2.underlineText()
         binding.conversationsFastscroller.updateColors(properPrimaryColor)
         binding.conversationsProgressBar.setIndicatorColor(properPrimaryColor)

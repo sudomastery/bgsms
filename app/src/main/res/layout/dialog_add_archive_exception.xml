@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_holder"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/activity_margin">
+
+    <org.fossify.commons.views.MyTextView
+        android:id="@+id/archive_exceptions_explainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/activity_margin"
+        android:layout_marginEnd="@dimen/activity_margin"
+        android:layout_marginBottom="@dimen/medium_margin"
+        android:text="@string/archive_exceptions_explainer" />
+
+    <LinearLayout
+        android:id="@+id/exceptions_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
+    <org.fossify.commons.views.MyTextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/activity_margin"
+        android:layout_marginEnd="@dimen/activity_margin"
+        android:hint="@string/exception_sender">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/exception_sender_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:textCursorDrawable="@null" />
+
+    </org.fossify.commons.views.MyTextInputLayout>
+
+    <org.fossify.commons.views.MyTextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/activity_margin"
+        android:layout_marginEnd="@dimen/activity_margin"
+        android:hint="@string/exception_keyword">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/exception_keyword_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:textCursorDrawable="@null" />
+
+    </org.fossify.commons.views.MyTextInputLayout>
+</LinearLayout>

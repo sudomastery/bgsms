@@ -22,6 +22,7 @@ import org.fossify.messages.extensions.messagesDB
 import org.fossify.messages.extensions.shouldUnarchive
 import org.fossify.messages.extensions.showReceivedMessageNotification
 import org.fossify.messages.extensions.updateConversationArchivedStatus
+import org.fossify.messages.helpers.IncomingRules
 import org.fossify.messages.helpers.ReceiverUtils.isMessageFilteredOut
 import org.fossify.messages.helpers.refreshConversations
 import org.fossify.messages.helpers.refreshMessages
@@ -43,6 +44,7 @@ class SmsReceiver : BroadcastReceiver() {
                 if (address.isBlank()) return@ensureBackgroundThread
                 val subject = parts.last().pseudoSubject.orEmpty()
                 val status = parts.last().status
+                val isFlash = parts.first().messageClass == android.telephony.SmsMessage.MessageClass.CLASS_0
                 val body = buildString { parts.forEach { append(it.messageBody.orEmpty()) } }
 
                 if (isMessageFilteredOut(appContext, body)) return@ensureBackgroundThread
@@ -66,7 +68,8 @@ class SmsReceiver : BroadcastReceiver() {
                     date = date,
                     threadId = threadId,
                     subscriptionId = subscriptionId,
-                    status = status
+                    status = status,
+                    isFlash = isFlash
                 )
             } finally {
                 pending.finish()
@@ -84,7 +87,8 @@ class SmsReceiver : BroadcastReceiver() {
         threadId: Long,
         type: Int = Telephony.Sms.MESSAGE_TYPE_INBOX,
         subscriptionId: Int,
-        status: Int
+        status: Int,
+        isFlash: Boolean = false
     ) {
         val photoUri = SimpleContactsHelper(context).getPhotoUriFromPhoneNumber(address)
         val bitmap = context.getNotificationBitmap(photoUri)
@@ -137,12 +141,16 @@ class SmsReceiver : BroadcastReceiver() {
 
         context.messagesDB.insertOrUpdate(message)
 
-        if (context.shouldUnarchive()) {
+        val decision = IncomingRules.decide(context, address, body, isFlash)
+        if (decision.archive) {
+            context.updateConversationArchivedStatus(threadId, true)
+        } else if (context.shouldUnarchive()) {
             context.updateConversationArchivedStatus(threadId, false)
         }
 
         refreshMessages()
         refreshConversations()
+        if (decision.muted || decision.archive) return
         context.showReceivedMessageNotification(
             messageId = newMessageId,
             isMms = false,

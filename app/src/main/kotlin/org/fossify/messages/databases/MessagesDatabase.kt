@@ -14,12 +14,15 @@ import org.fossify.messages.interfaces.ConversationsDao
 import org.fossify.messages.interfaces.DraftsDao
 import org.fossify.messages.interfaces.MessageAttachmentsDao
 import org.fossify.messages.interfaces.MessagesDao
+import org.fossify.messages.interfaces.SenderRulesDao
+import org.fossify.messages.models.ArchiveException
 import org.fossify.messages.models.Attachment
 import org.fossify.messages.models.Conversation
 import org.fossify.messages.models.Draft
 import org.fossify.messages.models.Message
 import org.fossify.messages.models.MessageAttachment
 import org.fossify.messages.models.RecycleBinMessage
+import org.fossify.messages.models.SenderRule
 
 @Database(
     entities = [
@@ -28,9 +31,11 @@ import org.fossify.messages.models.RecycleBinMessage
         MessageAttachment::class,
         Message::class,
         RecycleBinMessage::class,
-        Draft::class
+        Draft::class,
+        SenderRule::class,
+        ArchiveException::class
     ],
-    version = 11
+    version = 12
 )
 @TypeConverters(Converters::class)
 abstract class MessagesDatabase : RoomDatabase() {
@@ -44,6 +49,8 @@ abstract class MessagesDatabase : RoomDatabase() {
     abstract fun MessagesDao(): MessagesDao
 
     abstract fun DraftsDao(): DraftsDao
+
+    abstract fun SenderRulesDao(): SenderRulesDao
 
     companion object {
         private var db: MessagesDatabase? = null
@@ -68,6 +75,7 @@ abstract class MessagesDatabase : RoomDatabase() {
                             .addMigrations(MIGRATION_8_9)
                             .addMigrations(MIGRATION_9_10)
                             .addMigrations(MIGRATION_10_11)
+                            .addMigrations(MIGRATION_11_12)
                             .build()
                     }
                 }
@@ -172,6 +180,13 @@ abstract class MessagesDatabase : RoomDatabase() {
                     "CREATE INDEX IF NOT EXISTS `index_messages_thread_id_date` " +
                         "ON `messages` (`thread_id`, `date`)"
                 )
+            }
+        }
+
+        private val MIGRATION_11_12 = object : Migration(11, 12) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("CREATE TABLE IF NOT EXISTS `sender_rules` (`address_key` TEXT NOT NULL, `muted` INTEGER NOT NULL, `auto_archive` INTEGER NOT NULL, PRIMARY KEY(`address_key`))")
+                db.execSQL("CREATE TABLE IF NOT EXISTS `archive_exceptions` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `address_key` TEXT NOT NULL, `keyword` TEXT NOT NULL)")
             }
         }
     }

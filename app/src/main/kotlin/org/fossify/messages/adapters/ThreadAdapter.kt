@@ -34,6 +34,7 @@ import org.fossify.commons.extensions.beGone
 import org.fossify.commons.extensions.beVisible
 import org.fossify.commons.extensions.beVisibleIf
 import org.fossify.commons.extensions.copyToClipboard
+import org.fossify.commons.extensions.getProperTextColor
 import org.fossify.commons.extensions.formatDateOrTime
 import org.fossify.commons.extensions.getContrastColor
 import org.fossify.commons.extensions.getProperPrimaryColor
@@ -60,9 +61,9 @@ import org.fossify.messages.databinding.ItemThreadDateTimeBinding
 import org.fossify.messages.databinding.ItemThreadErrorBinding
 import org.fossify.messages.databinding.ItemThreadSendingBinding
 import org.fossify.messages.databinding.ItemThreadSuccessBinding
+import org.fossify.messages.helpers.MpesaBlur
 import org.fossify.messages.dialogs.DeleteConfirmationDialog
 import org.fossify.messages.dialogs.MessageDetailsDialog
-import org.fossify.messages.dialogs.SelectTextDialog
 import org.fossify.messages.extensions.config
 import org.fossify.messages.extensions.getContactFromAddress
 import org.fossify.messages.extensions.isImageMimeType
@@ -132,7 +133,6 @@ class ThreadAdapter(
             findItem(R.id.cab_save_as).isVisible = showSaveAs
             findItem(R.id.cab_share).isVisible = isOneItemSelected && hasText
             findItem(R.id.cab_forward_message).isVisible = isOneItemSelected
-            findItem(R.id.cab_select_text).isVisible = isOneItemSelected && hasText
             findItem(R.id.cab_properties).isVisible = isOneItemSelected
             findItem(R.id.cab_restore).isVisible = isRecycleBin
         }
@@ -148,7 +148,6 @@ class ThreadAdapter(
             R.id.cab_save_as -> saveAs()
             R.id.cab_share -> shareText()
             R.id.cab_forward_message -> forwardMessage()
-            R.id.cab_select_text -> selectText()
             R.id.cab_delete -> askConfirmDelete()
             R.id.cab_restore -> askConfirmRestore()
             R.id.cab_select_all -> selectAll()
@@ -261,13 +260,6 @@ class ThreadAdapter(
         activity.shareTextIntent(firstItem.body)
     }
 
-    private fun selectText() {
-        val firstItem = getSelectedItems().firstOrNull() as? Message ?: return
-        if (firstItem.body.trim().isNotEmpty()) {
-            SelectTextDialog(activity, firstItem.body)
-        }
-    }
-
     private fun showMessageDetails() {
         val message = getSelectedItems().firstOrNull() as? Message ?: return
         MessageDetailsDialog(activity, message)
@@ -366,11 +358,33 @@ class ThreadAdapter(
         }
     }
 
+    private val revealedBalances = HashSet<Long>()
+
+    private fun currentTextColor(): Int = activity.getProperTextColor()
+
+    /** M-PESA balances stay blurred until tapped. Leaving the chat recreates the adapter and blurs them again. */
+    private fun blurredBody(message: Message, color: Int): CharSequence? {
+        if (!message.isReceivedMessage() || message.id in revealedBalances) return null
+        if (!MpesaBlur.isMpesaSender(message.senderName, message.senderPhoneNumber)) return null
+        return MpesaBlur.blur(message.body, color) {
+            revealedBalances.add(message.id)
+            val index = currentList.indexOfFirst { it is Message && it.id == message.id }
+            if (index >= 0) notifyItemChanged(index)
+        }
+    }
+
     private fun setupView(holder: ViewHolder, view: View, message: Message) {
         ItemMessageBinding.bind(view).apply {
             threadMessageHolder.isSelected = selectedKeys.contains(message.getSelectionKey())
             threadMessageBody.apply {
-                text = message.body
+                val blurred = blurredBody(message, currentTextColor())
+                if (blurred != null) {
+                    text = blurred
+                    movementMethod = android.text.method.LinkMovementMethod.getInstance()
+                } else {
+                    text = message.body
+                }
+                setTextIsSelectable(false)
                 setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
                 beVisibleIf(message.body.isNotEmpty())
                 setOnLongClickListener {

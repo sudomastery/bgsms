@@ -22,6 +22,7 @@ import org.fossify.commons.helpers.FontHelper
 import org.fossify.commons.helpers.SimpleContactsHelper
 import org.fossify.commons.helpers.ensureBackgroundThread
 import org.fossify.commons.views.MyRecyclerView
+import org.fossify.messages.helpers.MpesaBlur
 import org.fossify.messages.activities.SimpleActivity
 import org.fossify.messages.databinding.ItemConversationBinding
 import org.fossify.messages.extensions.config
@@ -160,7 +161,15 @@ abstract class BaseConversationsAdapter(
             }
 
             conversationBodyShort.apply {
-                text = smsDraft ?: conversation.snippet
+                val snippet = smsDraft ?: conversation.snippet
+                val blurredSnippet = if (smsDraft == null &&
+                    MpesaBlur.isMpesaSender(conversation.title, conversation.phoneNumber)
+                ) {
+                    MpesaBlur.blur(snippet, textColor, null)
+                } else {
+                    null
+                }
+                text = blurredSnippet ?: snippet
                 setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize * 0.9f)
             }
 

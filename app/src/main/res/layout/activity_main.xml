@@ -136,13 +136,14 @@
         </RelativeLayout>
     </RelativeLayout>
 
-    <org.fossify.commons.views.MyFloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/conversations_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/activity_margin"
-        android:src="@drawable/ic_plus_vector"
+        android:text="@string/start_chat"
+        app:icon="@drawable/ic_chat_vector"
         app:applyWindowInsets="true" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

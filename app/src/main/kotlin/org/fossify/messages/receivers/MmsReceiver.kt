@@ -18,6 +18,7 @@ import org.fossify.messages.extensions.getLatestMMS
 import org.fossify.messages.extensions.getNameFromAddress
 import org.fossify.messages.extensions.insertOrUpdateConversation
 import org.fossify.messages.extensions.shouldUnarchive
+import org.fossify.messages.helpers.IncomingRules
 import org.fossify.messages.extensions.showReceivedMessageNotification
 import org.fossify.messages.extensions.updateConversationArchivedStatus
 import org.fossify.messages.helpers.ReceiverUtils.isMessageFilteredOut
@@ -82,7 +83,8 @@ class MmsReceiver : MmsReceivedReceiver() {
             context.getNameFromAddress(address, it)
         }
 
-        context.showReceivedMessageNotification(
+        val decision = IncomingRules.decide(context, address, mms.body)
+        if (!decision.muted && !decision.archive) context.showReceivedMessageNotification(
             messageId = mms.id,
             isMms = true,
             address = address,
@@ -94,7 +96,9 @@ class MmsReceiver : MmsReceivedReceiver() {
 
         val conversation = context.getConversations(mms.threadId).firstOrNull() ?: return
         runCatching { context.insertOrUpdateConversation(conversation) }
-        if (context.shouldUnarchive()) {
+        if (decision.archive) {
+            context.updateConversationArchivedStatus(mms.threadId, true)
+        } else if (context.shouldUnarchive()) {
             context.updateConversationArchivedStatus(mms.threadId, false)
         }
         refreshMessages()
