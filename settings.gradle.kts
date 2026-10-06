@@ -14,4 +14,10 @@ dependencyResolutionManagement {
         mavenLocal()
     }
 }
+// Patched Fossify commons (fake-copy warnings removed), built from the submodule.
+includeBuild("commons-bgsms") {
+    dependencySubstitution {
+        substitute(module("org.fossify:commons")).using(project(":commons"))
+    }
+}
 include(":app")
