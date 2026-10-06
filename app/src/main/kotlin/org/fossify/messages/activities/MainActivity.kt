@@ -29,6 +29,7 @@ import org.fossify.commons.extensions.formatDateOrTime
 import org.fossify.commons.extensions.getMyContactsCursor
 import org.fossify.commons.extensions.getProperBackgroundColor
 import org.fossify.commons.extensions.getProperPrimaryColor
+import org.fossify.commons.extensions.getContrastColor
 import org.fossify.commons.extensions.getProperTextColor
 import org.fossify.commons.extensions.hideKeyboard
 import org.fossify.commons.extensions.openNotificationSettings
@@ -128,6 +129,12 @@ class MainActivity : SimpleActivity() {
 
         val properPrimaryColor = getProperPrimaryColor()
         binding.noConversationsPlaceholder2.setTextColor(properPrimaryColor)
+        binding.conversationsFab.apply {
+            backgroundTintList = android.content.res.ColorStateList.valueOf(properPrimaryColor)
+            val contrast = properPrimaryColor.getContrastColor()
+            setTextColor(contrast)
+            iconTint = android.content.res.ColorStateList.valueOf(contrast)
+        }
         binding.noConversationsPlaceholder2.underlineText()
         binding.conversationsFastscroller.updateColors(properPrimaryColor)
         binding.conversationsProgressBar.setIndicatorColor(properPrimaryColor)
