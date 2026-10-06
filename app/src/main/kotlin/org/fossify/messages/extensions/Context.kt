@@ -50,6 +50,7 @@ import org.fossify.commons.models.PhoneNumber
 import org.fossify.commons.models.SimpleContact
 import org.fossify.messages.R
 import org.fossify.messages.databases.MessagesDatabase
+import org.fossify.messages.helpers.MpesaBlur
 import org.fossify.messages.helpers.AttachmentUtils.parseAttachmentNames
 import org.fossify.messages.helpers.Config
 import org.fossify.messages.helpers.FILE_SIZE_NONE
@@ -1078,7 +1079,7 @@ fun Context.showReceivedMessageNotification(
             messageId = messageId,
             isMms = isMms,
             address = address,
-            body = body,
+            body = if (MpesaBlur.isMpesaSender(address, senderName)) MpesaBlur.mask(body) else body,
             threadId = threadId,
             bitmap = bitmap,
             sender = senderName
