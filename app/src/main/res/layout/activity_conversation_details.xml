@@ -75,6 +75,62 @@
                 layout="@layout/divider" />
 
             <TextView
+                android:id="@+id/sender_rules_heading"
+                style="@style/SettingsSectionLabelStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sender_rules"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <RelativeLayout
+                android:id="@+id/mute_sender_holder"
+                style="@style/SettingsHolderSwitchStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <org.fossify.commons.views.MyMaterialSwitch
+                    android:id="@+id/mute_sender"
+                    style="@style/SettingsSwitchStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mute_sender" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/auto_archive_holder"
+                style="@style/SettingsHolderSwitchStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <org.fossify.commons.views.MyMaterialSwitch
+                    android:id="@+id/auto_archive"
+                    style="@style/SettingsSwitchStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/auto_archive_sender" />
+
+            </RelativeLayout>
+
+            <org.fossify.commons.views.MyTextView
+                android:id="@+id/archive_exceptions_button"
+                style="@style/SettingsHolderTextViewOneLinerStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/archive_exceptions"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <include
+                android:id="@+id/settings_sender_rules_divider"
+                layout="@layout/divider" />
+
+            <TextView
                 android:id="@+id/conversation_name_heading"
                 style="@style/SettingsSectionLabelStyle"
                 android:layout_width="match_parent"
